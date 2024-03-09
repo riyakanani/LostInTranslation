@@ -1,7 +1,11 @@
 # https://thepythoncode.com/article/using-speech-recognition-to-convert-speech-to-text-python
 # https://www.makeuseof.com/python-translator-build/#:~:text=Using%20the%20Googletrans%20Python%20module,a%20few%20lines%20of%20code.
+# https://www.educative.io/answers/how-do-you-translate-text-using-python 
+# https://www.geeksforgeeks.org/convert-text-speech-python/
 import speech_recognition as sr
 from googletrans import Translator
+from gtts import gTTS 
+import os 
 
 
 def speechToText(audioName):
@@ -32,16 +36,31 @@ def textTranslated(text):
     translated_text = translator.translate(text)
     # print(translated_text.text)
 
-    translated_text = translator.translate(translated_text, dest='ja')
+    translated_text = translator.translate(translated_text.text, dest='ja')
     # print(translated_text.text)
 
-    translated_text = translator.translate(translated_text, src='la')
+    translated_text = translator.translate(translated_text.text, src='en')
     # print(translated_text.text)
-    return translated_text
+    return translated_text.text
+
+def textToSpeech(text):
+    language = 'en'
+    myobj = gTTS(text=text, lang=language, slow=False) 
+    # Define the output file path
+    output_path = "/Users/riyakanani/Desktop/IMDM/IMDM390/LostInTranslation/SoundOutput/"
+    output_file = os.path.join(output_path, "welcome.mp3")
+
+    # Saving the converted audio in an MP3 file named "welcome.mp3" at the specified path
+    myobj.save(output_file)
+
+    # Playing the converted file
+    os.system(f"mpg321 {output_file}")
+
 
 def main():
     text = speechToText("sound.wav")
     translated = textTranslated(text)
+    textToSpeech(translated)
     print(translated)
 
 main()
