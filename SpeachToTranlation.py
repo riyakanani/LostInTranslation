@@ -42,7 +42,7 @@ def textToSpeech(text, filename, play=True):
     language = 'en'
     myobj = gTTS(text=text, lang=language, slow=False) 
     # Define the output file path
-    output_path = "/Users/malay/Desktop/litgit/LostInTranslation/SoundOutput/"
+    output_path = "/Users/malay/Desktop/LostInTranslation/SoundOutput/"
     output_file = os.path.join(output_path, filename)
 
     # Saving the converted audio in an MP3 file named "welcome.mp3" at the specified path
@@ -91,6 +91,8 @@ def main():
                  textTranslated(directionsAgain) +
                  "? Please help me!", "four.mp3")
     
+    
+
     textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
                 name + ", it’s already dark out here.", "five.mp3")
     try:
@@ -116,9 +118,9 @@ def main():
     else: 
         textToSpeech("Please, I would really appreciate it! Just knowing someone is listening is comforting to me. When I was a little kid and scared, my mom would always tell me to try to relive a happy memory.", "eight.mp3")
     # uses past participant's memory
-    # playsound("/Users/malay/Desktop/litgit/LostInTranslation/SoundOutput/memory.mp3")
+    playsound("/Users/malay/Desktop/litgit/LostInTranslation/SoundOutput/memory.mp3")
     # comment below out once generated once!!!!!!
-    textToSpeech("insert default memory here", "memory.mp3") # update
+    # textToSpeech("insert default memory here", "memory.mp3") # update
 
     textToSpeech("Share one of your own! I'd be happy to hear about anything, it'll remind me of home.", "nine.mp3")
     # playsound(output_path + "nine.mp3")
@@ -129,8 +131,17 @@ def main():
         pass
 
     # probably split below up to add pause + sound effect
-    textToSpeech("Thank you for sharing " + name + ", that was very comforting. Okay, I’m starting to see a car pull up! I’m not sure if it’s the one for me or not… Someone’s getting out of the car… They’re walking up to me now… ", "ten.mp3")
+    textToSpeech("Thank you for sharing " + name + ", that was very comforting. Okay, I’m starting to see a car pull up! I’m not sure if it’s the one for me or not… Do you think I should get in? This might be my only chance to get home.", "ten.mp3")
     # play dial tone idk
+    try:
+        savior = speechToText(5)
+    except:
+        savior = "yes"
+    if "yes" in savior:
+        textToSpeech("Okay, I'll just get in. I really want to just go home. Whatever happens to me, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
+    else:
+        textToSpeech("Okay, I'll wait for another car until I'm sure. If the connection disconnects, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
+
 
     print("done!")
 main()
