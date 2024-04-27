@@ -46,7 +46,7 @@ def textToSpeech(text, filename, play=True):
     language = 'en'
     myobj = gTTS(text=text, lang=language, slow=False) 
     # Define the output file path
-    output_path = "/Users/malay/Desktop/LostInTranslation/SoundOutput/"
+    output_path = "./SoundOutput/"
     output_file = os.path.join(output_path, filename)
 
     # Saving the converted audio in an MP3 file named "welcome.mp3" at the specified path
@@ -66,7 +66,7 @@ def textToSpeech(text, filename, play=True):
 # ~ add more interactivity! tbh not hard at all
 
 def main():
-    output_path = "/Users/malay/Desktop/LostInTranslation/SoundOutput/"
+    output_path = "./SoundOutput/"
     #add placeholder text
     textToSpeech("Help! Help! Is this 911? I don’t know who's on the line right now but my car broke down and I’m lost in _. I don’t know what to do. I think I need to find a way out of here to get home. Who is this? What’s your name?", "one.mp3")
     while True:
@@ -81,7 +81,6 @@ def main():
 
     textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. How do I get to _? Can you please tell me the directions?", "two.mp3")
     
-    name = "riya"
     responce = "No"
     while True:
         try:
@@ -90,20 +89,19 @@ def main():
             gc.collect()
             textToSpeech(directions, "directions.mp3")
             responce = speechToText(3)
-            print("debugger1");
+            print("debugger1")
             #if you say no, it will cause an infinite loop
-            if(responce.__contains__("Yes") and directions):
+            if(("yeah" in responce or "yes" in responce) and directions):
                 print("debugger2")
-                break;
-            playsound(output_path + "repeat2.mp3");
+                break
+            playsound(output_path + "repeat2.mp3")
             gc.collect()
 
         except Exception as e:
             print("Error:", e)
             playsound(output_path + "extraOne.mp3")
             gc.collect()
-
-            print("debugger3");
+            print("debugger3")
 
 
 
