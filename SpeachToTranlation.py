@@ -2,11 +2,15 @@
 # https://www.makeuseof.com/python-translator-build/#:~:text=Using%20the%20Googletrans%20Python%20module,a%20few%20lines%20of%20code.
 # https://www.educative.io/answers/how-do-you-translate-text-using-python 
 # https://www.geeksforgeeks.org/convert-text-speech-python/
+
+#add more interaction that is visible to the user. 
 import speech_recognition as sr
 from googletrans import Translator
 from gtts import gTTS 
 import os
 from playsound import playsound
+import gc
+
 # def speechToText(audioName):
 #     r = sr.Recognizer()   #Speech recognition
 #     audio = sr.AudioFile(audioName)
@@ -51,6 +55,8 @@ def textToSpeech(text, filename, play=True):
     # Playing audio
     if play:
         playsound(output_file)
+    gc.collect()
+
 
 # OTHER IDEAS FOR OPTIMIZATION
 # ~ add distortion!!! connect to fiza script somehow idk
@@ -60,21 +66,46 @@ def textToSpeech(text, filename, play=True):
 # ~ add more interactivity! tbh not hard at all
 
 def main():
-    output_path = "/Users/malay/Desktop/litgit/LostInTranslation/SoundOutput/"
-
+    output_path = "/Users/malay/Desktop/LostInTranslation/SoundOutput/"
+    #add placeholder text
     textToSpeech("Help! Help! Is this 911? I don’t know who's on the line right now but my car broke down and I’m lost in _. I don’t know what to do. I think I need to find a way out of here to get home. Who is this? What’s your name?", "one.mp3")
-    try:
-        name = speechToText(2)
-    except:
-        # give them a chance to try again?
-        playsound(output_path + "extraOne.mp3")
-        name = "Alex"
+    while True:
+        try:
+            name = speechToText(2)
+            if name:  # If name is not empty, break the loop
+                break
+        except:
+            # give them a chance to try again
+            # textToSpeech("Sorry, I couldn\'t hear you can you repeat that","extraOne.mp3");
+            playsound(output_path + "extraOne.mp3")
 
     textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. How do I get to _? Can you please tell me the directions?", "two.mp3")
-    try:
-        directions = speechToText(5)
-    except:
-        directions = "default"
+    
+    name = "riya"
+    responce = "No"
+    while True:
+        try:
+            directions = speechToText(5)
+            playsound(output_path +  "didYouSay.mp3")
+            gc.collect()
+            textToSpeech(directions, "directions.mp3")
+            responce = speechToText(3)
+            print("debugger1");
+            #if you say no, it will cause an infinite loop
+            if(responce.__contains__("Yes") and directions):
+                print("debugger2")
+                break;
+            playsound(output_path + "repeat2.mp3");
+            gc.collect()
+
+        except Exception as e:
+            print("Error:", e)
+            playsound(output_path + "extraOne.mp3")
+            gc.collect()
+
+            print("debugger3");
+
+
 
     if "left" in directions:
         textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead.", "three.mp3")
@@ -90,13 +121,14 @@ def main():
     textToSpeech("I’m still lost " + name + ", and I’m starting to lose connection. Did you say " + 
                  textTranslated(directionsAgain) +
                  "? Please help me!", "four.mp3")
+    # add the text to respond
     
-    
+
 
     textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
                 name + ", it’s already dark out here.", "five.mp3")
     try:
-        taxi = speechToText(30)
+        taxi = speechToText(15) #reduce the time
         taxiWords = taxi.split()
         taxi = ""
         for i in range(5):
@@ -118,7 +150,7 @@ def main():
     else: 
         textToSpeech("Please, I would really appreciate it! Just knowing someone is listening is comforting to me. When I was a little kid and scared, my mom would always tell me to try to relive a happy memory.", "eight.mp3")
     # uses past participant's memory
-    playsound("/Users/malay/Desktop/litgit/LostInTranslation/SoundOutput/memory.mp3")
+    playsound("/Users/malay/Desktop/LostInTranslation/SoundOutput/memory.mp3")
     # comment below out once generated once!!!!!!
     # textToSpeech("insert default memory here", "memory.mp3") # update
 
