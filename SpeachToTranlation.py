@@ -10,6 +10,8 @@ from gtts import gTTS
 import os
 from playsound import playsound
 import gc
+import numpy as np
+
 
 # def speechToText(audioName):
 #     r = sr.Recognizer()   #Speech recognition
@@ -34,13 +36,17 @@ def speechToText(time) :
         print(text)
         return text
 
-def textTranslated(text): # can mess around w this!
+def textTranslated(text):
     translator = Translator()
 
-    translated = translator.translate(text, dest='ja')
-    translated = translator.translate(translated.text, dest='en', src='ja')
-
-    return translated.text
+    # translated_text = translator.translate(text)
+    translated_text = translator.translate(text, dest='ja')
+    print(translated_text.text)
+    translated_text = translator.translate(translated_text.text, src='la')
+    print(translated_text.text)
+    translated_text = translator.translate(translated_text.text)
+    print(translated_text.text)
+    return translated_text.text
 
 def textToSpeech(text, filename, play=True):
     language = 'en'
@@ -85,6 +91,8 @@ def main():
     while True:
         try:
             directions = speechToText(5)
+            directions = textTranslated(directions)
+
             playsound(output_path +  "didYouSay.mp3")
             gc.collect()
             textToSpeech(directions, "directions.mp3")
@@ -106,7 +114,7 @@ def main():
 
 
     if "left" in directions:
-        textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead.", "three.mp3")
+        textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead. I'm walking past a large tree. Which colored path should I take?", "three.mp3")
     elif "right" in directions: 
         textToSpeech("So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
     else:
@@ -119,15 +127,29 @@ def main():
     textToSpeech("I’m still lost " + name + ", and I’m starting to lose connection. Did you say " + 
                  textTranslated(directionsAgain) +
                  "? Please help me!", "four.mp3")
-    # add the text to respond
     
-
+    # add the text to respond
+    responce = "No"
+    while True:
+        try:
+            responce = speechToText(3)
+            if(("yeah" in responce or "yes" in responce) and directions):
+                print("debugger2")
+                break
+            playsound(output_path + "repeat2.mp3")
+            gc.collect()
+        except Exception as e:
+            print("Error:", e)
+            playsound(output_path + "extraOne.mp3")
+            gc.collect()
+            print("debugger3")
 
     textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
                 name + ", it’s already dark out here.", "five.mp3")
     try:
-        taxi = speechToText(15) #reduce the time
+        taxi = speechToText(10) #reduce the time
         taxiWords = taxi.split()
+        np.random.shuffle(taxiWords)
         taxi = ""
         for i in range(5):
             taxi = taxi + taxiWords[i] + " "
@@ -148,7 +170,7 @@ def main():
     else: 
         textToSpeech("Please, I would really appreciate it! Just knowing someone is listening is comforting to me. When I was a little kid and scared, my mom would always tell me to try to relive a happy memory.", "eight.mp3")
     # uses past participant's memory
-    playsound("/Users/malay/Desktop/LostInTranslation/SoundOutput/memory.mp3")
+    playsound("./SoundOutput/memory.mp3")
     # comment below out once generated once!!!!!!
     # textToSpeech("insert default memory here", "memory.mp3") # update
 
@@ -156,6 +178,12 @@ def main():
     # playsound(output_path + "nine.mp3")
     try:
         memory = speechToText(30)
+        memory = textTranslated(memory)
+        memoryWords = taxi.split(".")
+        np.random.shuffle(memoryWords)
+        memory = ""
+        for i in range(5):
+            memory = memory + memoryWords[i] + " "
         textToSpeech(memory, "memory.mp3", False)
     except:
         pass
