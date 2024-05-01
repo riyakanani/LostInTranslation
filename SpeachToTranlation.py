@@ -21,6 +21,8 @@ import os
 from playsound import playsound
 import gc
 import numpy as np
+from word2number import w2n
+
 
 
 def speechToText(time) :
@@ -95,16 +97,135 @@ def speechToText(time) :
 
 
 def textTranslated(text):
-    translator = Translator()
+   translator = Translator()
+   LANGUAGES = {
+   'af': 'afrikaans',
+   'sq': 'albanian',
+   'am': 'amharic',
+   'ar': 'arabic',
+   'hy': 'armenian',
+   'az': 'azerbaijani',
+   'eu': 'basque',
+   'be': 'belarusian',
+   'bn': 'bengali',
+   'bs': 'bosnian',
+   'bg': 'bulgarian',
+   'ca': 'catalan',
+   'ceb': 'cebuano',
+   'ny': 'chichewa',
+   'zh-cn': 'chinese (simplified)',
+   'zh-tw': 'chinese (traditional)',
+   'co': 'corsican',
+   'hr': 'croatian',
+   'cs': 'czech',
+   'da': 'danish',
+   'nl': 'dutch',
+   'en': 'english',
+   'eo': 'esperanto',
+   'et': 'estonian',
+   'tl': 'filipino',
+   'fi': 'finnish',
+   'fr': 'french',
+   'fy': 'frisian',
+   'gl': 'galician',
+   'ka': 'georgian',
+   'de': 'german',
+   'el': 'greek',
+   'gu': 'gujarati',
+   'ht': 'haitian creole',
+   'ha': 'hausa',
+   'haw': 'hawaiian',
+   'iw': 'hebrew',
+   'he': 'hebrew',
+   'hi': 'hindi',
+   'hmn': 'hmong',
+   'hu': 'hungarian',
+   'is': 'icelandic',
+   'ig': 'igbo',
+   'id': 'indonesian',
+   'ga': 'irish',
+   'it': 'italian',
+   'ja': 'japanese',
+   'jw': 'javanese',
+   'kn': 'kannada',
+   'kk': 'kazakh',
+   'km': 'khmer',
+   'ko': 'korean',
+   'ku': 'kurdish (kurmanji)',
+   'ky': 'kyrgyz',
+   'lo': 'lao',
+   'la': 'latin',
+   'lv': 'latvian',
+   'lt': 'lithuanian',
+   'lb': 'luxembourgish',
+   'mk': 'macedonian',
+   'mg': 'malagasy',
+   'ms': 'malay',
+   'ml': 'malayalam',
+   'mt': 'maltese',
+   'mi': 'maori',
+   'mr': 'marathi',
+   'mn': 'mongolian',
+   'my': 'myanmar (burmese)',
+   'ne': 'nepali',
+   'no': 'norwegian',
+   'or': 'odia',
+   'ps': 'pashto',
+   'fa': 'persian',
+   'pl': 'polish',
+   'pt': 'portuguese',
+   'pa': 'punjabi',
+   'ro': 'romanian',
+   'ru': 'russian',
+   'sm': 'samoan',
+   'gd': 'scots gaelic',
+   'sr': 'serbian',
+   'st': 'sesotho',
+   'sn': 'shona',
+   'sd': 'sindhi',
+   'si': 'sinhala',
+   'sk': 'slovak',
+   'sl': 'slovenian',
+   'so': 'somali',
+   'es': 'spanish',
+   'su': 'sundanese',
+   'sw': 'swahili',
+   'sv': 'swedish',
+   'tg': 'tajik',
+   'ta': 'tamil',
+   'te': 'telugu',
+   'th': 'thai',
+   'tr': 'turkish',
+   'uk': 'ukrainian',
+   'ur': 'urdu',
+   'ug': 'uyghur',
+   'uz': 'uzbek',
+   'vi': 'vietnamese',
+   'cy': 'welsh',
+   'xh': 'xhosa',
+   'yi': 'yiddish',
+   'yo': 'yoruba',
+   'zu': 'zulu'}
 
-    # translated_text = translator.translate(text)
-    translated_text = translator.translate(text, dest='ja')
-    print(translated_text.text)
-    translated_text = translator.translate(translated_text.text, src='la')
-    print(translated_text.text)
-    translated_text = translator.translate(translated_text.text)
-    print(translated_text.text)
-    return translated_text.text
+
+   textWords = text.split()
+
+
+   newSentence = ""
+   for i in range(translatedWords):
+       random_number = random.randint(0, len(textWords))
+       textWords[random_number] = (translator.translate(textWords[random_number], dest = random.choice(list(LANGUAGES.keys())))).text
+   newSentence = "".join(textWords)
+
+
+   # print(translated_text.text)
+   # translated_text = translator.translate(translated_text.text, src='la')
+   # print(translated_text.text)
+   # translated_text = translator.translate(translated_text.text)
+   # print(translated_text.text)
+   translatedWords += 1
+   return newSentence
+
 
 def textToSpeech(text, filename, play=True):
     language = 'en'
@@ -160,8 +281,8 @@ def main():
     output_path = "./SoundOutput/"
     location = "Serenity Circle"
 
-    textToSpeech("Help! Help! I don’t know who's on the line right now but my car broke down and I’m lost. I'm on Serenity Circle next to Kettle Academy."
-     + "I don’t know what to do. I think I need to find a way out of here to get home. What’s your name?", "one.mp3")
+    textToSpeech("Help! Help! I don’t know who's on the line but my car broke down and I’m lost. I'm on Serenity Circle next to Kettle Academy."
+     + "I don’t know what to do. I need to find a way out of here to get home. What’s your name?", "one.mp3")
 
     while True:
         try:
@@ -172,7 +293,21 @@ def main():
             # give them a chance to try again
             playsound(output_path + "extraOne.mp3")
 
-    textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. I live on Evergreen Grove."
+
+    textToSpeech("Is this a human? Please verify. What is your shoe size?", "VerifyQuestion.mp3")
+    # name = speechToText(3)
+    while True:
+        try:
+            answers = speechToText(3)
+            if answers:  # If name is not empty, break the loop
+                textToSpeech("Verified!", "Verified.mp3")
+                break
+        except:
+            # give them a chance to try again
+            # textToSpeech("Sorry, I couldn\'t hear you can you repeat that","extraOne.mp3");
+            playsound(output_path + "extraOne.mp3")
+    
+    textToSpeech("Thank you for helping me " + name + "! There’s no one around, and it’s starting to get dark. I live on Evergreen Grove."
                  + "How do I get there? Again, I'm on Serenity Circle, with Kettle Academy on my right.", "two.mp3")
     
     
@@ -258,111 +393,129 @@ def main():
         # elif location == "sunset":
         # location == "dead":
         else:
-            textToSpeech("I'm getting tired! I'm still at " + location + ", which I think is still very far from home. I'm just going to call a taxi instead.", file_name)
+            textToSpeech("Im running out of energy! I'm still at " + location + ", which I think is still very far from home. I’m gonna need to use taxi to get back. Do you happen to have a phonebook? Can you telll me the number to call a cab?", file_name)
             break
 
     # TAXI THING
-    try:
-        taxi = speechToText(6) #reduce the time
-        taxiWords = taxi.split()
-        np.random.shuffle(taxiWords)
-        taxi = ""
-        for i in range(5):
-            taxi = taxi + taxiWords[i] + " "
-    except:
-        textToSpeech("Were you able to find the number?: ", "findNumberQuestion.mp3")
-
-
     while True:
         try:
-            response = speechToText(3)
-            if(response and ("No" in response or "no" in response)):
-                print("debugger2")
-                textToSpeech("okay let me know when you find it.", "six.mp3")
-            if(response and ("yes" in response or "Yes" in response or "yeah" in response)):
-                textToSpeech("okay let me know.", "six.mp3")
+            taxi = speechToText(6) #reduce the time
+            taxiWords = taxi.split()
+            taxiWords = np.random.shuffle(taxiWords)
+            taxi = ""
+            for i in range(len(taxiWords)):
                 try:
-                    taxi = speechToText(6) #reduce the time
-                    taxiWords = taxi.split()
-                    if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
-                        break
+                    w2n.word_to_num(taxiWords[i])
+                    taxi = taxi + taxiWords[i] + " "
                 except:
-                    textToSpeech("Can you say it again?: ")
-                    break
-            else:
-                try:
-                    taxi = speechToText(6) #reduce the time
-                    taxiWords = taxi.split()
-                    if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
-                        break
-                except:
-                    textToSpeech("Can you say it again?: ")
-                            
+                    print("not a number: " + taxiWords[i])
+            if(len(taxiWords) > 0):
                 break
-            gc.collect()
-        except Exception as e:
-            print("Error:", e)
-            playsound(output_path + "extraOne.mp3")
-            gc.collect()
-            print("debugger3")
+        except:
+            playsound(output_path + "findNumberQuestion.mp3")
+            print("no number")
+
+    # while True:
+    #     try:
+    #         response = speechToText(3)
+    #         if(response and ("No" in response or "no" in response)):
+    #             print("debugger2")
+    #             textToSpeech("okay let me know when you find it.", "six.mp3")
+    #         if(response and ("yes" in response or "Yes" in response or "yeah" in response)):
+    #             textToSpeech("okay let me know.", "six.mp3")
+    #             try:
+    #                 taxi = speechToText(6) #reduce the time
+    #                 taxiWords = taxi.split()
+    #                 if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
+    #                     break
+    #             except:
+    #                 textToSpeech("Can you say it again? ", "CanYouSayItAgain.mp3")
+    #                 break
+    #         else:
+    #             try:
+    #                 taxi = speechToText(6) #reduce the time
+    #                 taxiWords = taxi.split()
+    #                 if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
+    #                     break
+    #             except:
+    #                 textToSpeech("Can you say it again? ", "CanYouSayItAgain.mp3")
+                            
+    #             break
+    #         gc.collect()
+    #     except Exception as e:
+    #         print("Error:", e)
+    #         playsound(output_path + "extraOne.mp3")
+    #         gc.collect()
+    #         print("debugger3")
 
        
     textToSpeech("Can you please repeat the number? I think I heard " +
                 taxi + ", but then you cut out. I can’t understand you!", "six.mp3")
     
-    try:
-        taxi = speechToText(6) #reduce the time
-        taxiWords = taxi.split()
-        np.random.shuffle(taxiWords)
-        taxi = ""
-        for i in range(5):
-            taxi = taxi + taxiWords[i] + " "
-    except:
-        print("no number")
+    while True:
+        try:
+            taxi = speechToText(6) #reduce the time
+            taxiWords = taxi.split()
+            taxi = ""
+            for i in range(len(taxiWords)):
+                try:
+                    w2n.word_to_num(taxiWords[i])
+                    taxi = taxi + taxiWords[i] + " "
+                except:
+                    print("not a number: " + taxiWords[i])
+            if(len(taxiWords) > 0):
+                break
+        except:
+            playsound(output_path + "findNumberQuestion.mp3")
+            print("no number")
 
 
 
-    textToSpeech("Got it! Thanks " + name + ", I’ll call now, be right back… Awesome, someone’s on their way to pick me up now! Is it okay if I stay on the line with you while I wait?", "seven.mp3")
+    textToSpeech("Got it! Thanks " + name + ", I’ll call now. ", "calling.mp3")
+    textToSpeech("         They're on the way! will you wait on the line with me?", "seven.mp3")
     try:
         confirmation = speechToText(2)
     except:
         confirmation = "default"
 
     if "yes" in confirmation:
-        textToSpeech("Thank you, I really appreciate it! Just knowing someone is listening is comforting to me. When I was a little kid and scared, my mom would always tell me to try to relive a happy memory.", "eight.mp3")
+        textToSpeech("Thank you. Knowing someone is listening is comforting. When I was little, my parents would give me memories in the rain.", "eight.mp3")
     else: 
-        textToSpeech("Please, I would really appreciate it! Just knowing someone is listening is comforting to me. When I was a little kid and scared, my mom would always tell me to try to relive a happy memory.", "eight.mp3")
+        textToSpeech("Please, I would really appreciate it! Knowing someone is listening is comforting. When I was little, my parents would give me memories in the rain.", "eight.mp3")
     # uses past participant's memory
     playsound("./SoundOutput/memory.mp3")
     # comment below out once generated once!!!!!!
     # textToSpeech("insert default memory here", "memory.mp3") # update
 
     #this is one of many memories that I have:
-    textToSpeech("Share one of your own! I'd be happy to hear about anything, it'll remind me of home.", "nine.mp3")
+    textToSpeech("Share one of your own memories in the rain! I'd be happy to learn, it'll remind me of home.", "nine.mp3")
     # playsound(output_path + "nine.mp3")
     try:
         memory = speechToText(30)
         memory = textTranslated(memory)
-        memoryWords = taxi.split(".")
-        np.random.shuffle(memoryWords)
+        memoryWords = taxi.split(" ")
+        memoryWords = np.random.shuffle(memoryWords)
         memory = ""
-        for i in range(5):
+        for i in range(len(memoryWords)):
             memory = memory + memoryWords[i] + " "
+        # memory = textTranslated(memory)
         textToSpeech(memory, "memory.mp3", False)
     except:
         pass
 
     # probably split below up to add pause + sound effect
-    textToSpeech("Thank you for sharing " + name + ", that was very comforting. Okay, I’m starting to see a car pull up! I’m not sure if it’s the one for me or not… Do you think I should get in? This might be my only chance to get home.", "ten.mp3")
+    textToSpeech("Thank you for sharing " + name + ", that was very comforting. Okay, I’m starting to see headlights! I’m not sure if it’s for me… Should I get in?", "ten.mp3")
+    # textToSpeech("Thank you for sharing " + name + ", that was very comforting. Im starting to lose connection. Whatever happens, please preserve my memory by writing it on the wall of the phonebooth.", "ten.mp3")
+
     # play dial tone idk
     try:
         savior = speechToText(5)
     except:
         savior = "yes"
     if "yes" in savior:
-        textToSpeech("Okay, I'll just get in. I really want to just go home. Whatever happens to me, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
+        textToSpeech("Okay, I'm getting in. Whatever happens, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
     else:
-        textToSpeech("Okay, I'll wait for another car until I'm sure. If the connection disconnects, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
+        textToSpeech("Okay, I'll wait. If the connection disconnects, please preserve my memory by writing it on the wall of the phonebooth. Thanks for your help.", "eleven.mp3")
 
 
     print("done!")
