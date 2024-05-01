@@ -122,53 +122,58 @@ def textToSpeech(text, filename, play=True):
     gc.collect()
 
 iteration = 0
+cantHearResponce = False
 def getDirections():
+    # print("function called")
     output_path = "./SoundOutput/"
     global iteration
+    global cantHearResponce
     while True:
         try:
-            directions = speechToText(5)
+            if(cantHearResponce == False):
+                playsound(output_path +  "question.mp3")
+                directions = speechToText(5)
 
             playsound(output_path +  "didYouSay.mp3")
             gc.collect()
             textToSpeech(directions, "confirm" + str(iteration) + ".mp3")
             iteration = iteration + 1
-
+            cantHearResponce = True
             response = speechToText(2)
-            print("debugger1")
+            cantHearResponce = False;
 
             #if you say no, it will cause an infinite loop!!!!!!
-            if(("yeah" in response or "yes" in response)):
-                print("debugger2")
+            if(("yeah" in response or "yes" in response or "sure" in response)):
                 gc.collect()
                 return directions.lower()
-            playsound(output_path + "repeat2.mp3")
+            
+            playsound(output_path + "apology.mp3")
             gc.collect()
 
         except Exception as e:
-            print("didn't understand")
-            playsound(output_path + "extraOne.mp3")
+            print(e)
+            if(cantHearResponce == False):
+                playsound(output_path + "extraOne.mp3")
             gc.collect()
 
 def main():
     output_path = "./SoundOutput/"
     location = "Serenity Circle"
-    iteration = 0
 
-    # textToSpeech("Help! Help! I don’t know who's on the line right now but my car broke down and I’m lost. I'm on Serenity Circle next to a _."
-    #  + "I don’t know what to do. I think I need to find a way out of here to get home. Who is this? What’s your name?", "one.mp3")
+    textToSpeech("Help! Help! I don’t know who's on the line right now but my car broke down and I’m lost. I'm on Serenity Circle next to Kettle Academy."
+     + "I don’t know what to do. I think I need to find a way out of here to get home. What’s your name?", "one.mp3")
 
-    # while True:
-    #     try:
-    #         name = speechToText(3)
-    #         if name:  # If name is not empty, break the loop
-    #             break
-    #     except:
-    #         # give them a chance to try again
-    #         playsound(output_path + "extraOne.mp3")
+    while True:
+        try:
+            name = speechToText(3)
+            if name:  # If name is not empty, break the loop
+                break
+        except:
+            # give them a chance to try again
+            playsound(output_path + "extraOne.mp3")
 
-    # textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. I live on Evergreen Grove."
-    #              + "How do I get there? Again, I'm on Serenity Circle, with Kettle Academy on my right. Can you please tell me the directions?", "two.mp3")
+    textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. I live on Evergreen Grove."
+                 + "How do I get there? Again, I'm on Serenity Circle, with Kettle Academy on my right.", "two.mp3")
     
     
     for i in range(3): # repeats 3 times
@@ -255,45 +260,6 @@ def main():
         else:
             textToSpeech("I'm getting tired! I'm still at " + location + ", which I think is still very far from home. I'm just going to call a taxi instead.", file_name)
             break
-        
-        
-
-    # if "left" in directions:
-    #     textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead. I'm walking past a large tree. Which colored path should I take?", "three.mp3")
-    # elif "right" in directions: 
-    #     textToSpeech("So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
-    # else:
-    #     textToSpeech("I couldn’t quite hear you! So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
-    
-    # add more nav
-    # try:
-    #     directionsAgain = speechToText(5)
-    # except:
-    #     directionsAgain = "change default directions here later" # update
-
-    # textToSpeech("I’m still lost " + name + ", and I’m starting to lose connection. Did you say " + 
-    #              textTranslated(directionsAgain) +
-    #              "? Please help me!", "four.mp3")
-    
-    # # add the text to respond
-    # response = "No"
-    # while True:
-    #     try:
-    #         response = speechToText(3)
-    #         if(("yeah" in response or "yes" in response) and response):
-    #             print("debugger2")
-    #             break
-    #         playsound(output_path + "repeat2.mp3")
-    #         gc.collect()
-    #     except Exception as e:
-    #         print("Error:", e)
-    #         playsound(output_path + "extraOne.mp3")
-    #         gc.collect()
-    #         print("debugger3")
-
-    # textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
-    #             name + ", it’s already dark out here.", "five.mp3")
-    
 
     # TAXI THING
     try:
@@ -304,7 +270,7 @@ def main():
         for i in range(5):
             taxi = taxi + taxiWords[i] + " "
     except:
-        textToSpeech("Were you able to find the number?: ")
+        textToSpeech("Were you able to find the number?: ", "findNumberQuestion.mp3")
 
 
     while True:
