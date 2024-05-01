@@ -10,9 +10,6 @@ import librosa
 import soundfile as sf
 import time as tm # Import the time module
 
-
-
-
 #changes
 
 #add more interaction that is visible to the user. 
@@ -124,95 +121,181 @@ def textToSpeech(text, filename, play=True):
         playsound(output_file)
     gc.collect()
 
-
-# OTHER IDEAS FOR OPTIMIZATION
-# ~ add distortion!!! connect to fiza script somehow idk
-# ~ update try catch to catch specific error
-# ~ put script lines into array?
-# ~ change hard coded time values?? idk how that'd work w phonebook tho
-# ~ add more interactivity! tbh not hard at all
-
-def main():
+iteration = 0
+def getDirections():
     output_path = "./SoundOutput/"
-    #add placeholder text
-    textToSpeech("Help! Help! I don’t know who's on the line right now but my car broke down and I’m lost in _. I don’t know what to do. I think I need to find a way out of here to get home. Who is this? What’s your name?", "one.mp3")
-    # name = speechToText(3)
-    while True:
-        try:
-            name = speechToText(3)
-            if name:  # If name is not empty, break the loop
-                break
-        except:
-            # give them a chance to try again
-            # textToSpeech("Sorry, I couldn\'t hear you can you repeat that","extraOne.mp3");
-            playsound(output_path + "extraOne.mp3")
-
-    textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. How do I get to _? Can you please tell me the directions?", "two.mp3")
-    
-    responce = "No"
+    global iteration
     while True:
         try:
             directions = speechToText(5)
-            directions = textTranslated(directions)
 
             playsound(output_path +  "didYouSay.mp3")
             gc.collect()
-            textToSpeech(directions, "directions.mp3")
+            textToSpeech(directions, "confirm" + str(iteration) + ".mp3")
+            iteration = iteration + 1
 
-            responce = speechToText(2)
+            response = speechToText(2)
             print("debugger1")
-            #if you say no, it will cause an infinite loop
-            if(("yeah" in responce or "yes" in responce)):
+
+            #if you say no, it will cause an infinite loop!!!!!!
+            if(("yeah" in response or "yes" in response)):
                 print("debugger2")
-                break
+                gc.collect()
+                return directions.lower()
             playsound(output_path + "repeat2.mp3")
             gc.collect()
 
         except Exception as e:
-            print("Error:", e)
+            print("didn't understand")
             playsound(output_path + "extraOne.mp3")
             gc.collect()
 
-            print("debugger3");
+def main():
+    output_path = "./SoundOutput/"
+    location = "Serenity Circle"
+    iteration = 0
 
+    # textToSpeech("Help! Help! I don’t know who's on the line right now but my car broke down and I’m lost. I'm on Serenity Circle next to a _."
+    #  + "I don’t know what to do. I think I need to find a way out of here to get home. Who is this? What’s your name?", "one.mp3")
 
+    # while True:
+    #     try:
+    #         name = speechToText(3)
+    #         if name:  # If name is not empty, break the loop
+    #             break
+    #     except:
+    #         # give them a chance to try again
+    #         playsound(output_path + "extraOne.mp3")
 
-    if "left" in directions:
-        textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead. I'm walking past a large tree. Which colored path should I take?", "three.mp3")
-    elif "right" in directions: 
-        textToSpeech("So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
-    else:
-        textToSpeech("I couldn’t quite hear you! So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
-    try:
-        directionsAgain = speechToText(5)
-    except:
-        directionsAgain = "change default directions here later" # update
-
-    textToSpeech("I’m still lost " + name + ", and I’m starting to lose connection. Did you say " + 
-                 textTranslated(directionsAgain) +
-                 "? Please help me!", "four.mp3")
+    # textToSpeech("Thanks so much for your help " + name + "! There’s no one around, and it’s starting to get dark. I live on Evergreen Grove."
+    #              + "How do I get there? Again, I'm on Serenity Circle, with Kettle Academy on my right. Can you please tell me the directions?", "two.mp3")
     
-    # add the text to respond
-    responce = "No"
-    while True:
-        try:
-            responce = speechToText(3)
-            if(("yeah" in responce or "yes" in responce) and responce):
-                print("debugger2")
-                break
-            playsound(output_path + "repeat2.mp3")
-            gc.collect()
-        except Exception as e:
-            print("Error:", e)
-            playsound(output_path + "extraOne.mp3")
-            gc.collect()
-            print("debugger3")
+    
+    for i in range(3): # repeats 3 times
+        directions = getDirections();
+        file_name = "directions" + str(i) + ".mp3"
 
-    textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
-                name + ", it’s already dark out here.", "five.mp3")
+        if location == "Serenity Circle": # willow, tranquility, echo
+            if any(i in directions for i in ["tranquility", "lane", "right", "up"]):
+                textToSpeech("Okay, I'm going up and right to Tranquility Lane.", file_name)
+                location = "Tranquility Lane"
+            elif any(i in directions for i in ["echo", "valley", "drive", "down"]):
+                textToSpeech("Okay, I'm going down and left to Echo Valley Drive.", file_name)
+                location = "Echo Valley Drive"
+            elif any(i in directions for i in ["willow", "creek", "avenue", "left"]):
+                textToSpeech("Okay, I'm going up and left to Willow Creek Avenue.", file_name)
+                location = "Willow Creek Avenue"
+            else:
+                textToSpeech("I'm having trouble. I'm just going to go up and left to Willow Creek Avenue.", file_name)
+                location = "Willow Creek Avenue"
+
+        elif location == "Willow Creek Avenue": # ivy, hollow, serenity, tranquility
+            if any(i in directions for i in ["hollow", "square"]) or (("left" in directions) and ("up" in directions)):
+                textToSpeech("Okay, I'm going left and up to Hollow Square.", file_name)
+                location = "Hollow Square"
+            elif any(i in directions for i in ["ivy", "left"]):
+                textToSpeech("Okay, I'm going left to Ivy Lane.", file_name)
+                location = "Ivy Lane"
+            elif any(i in directions for i in ["serenity", "circle"]) or (("right" in directions) and ("down" in directions)):
+                textToSpeech("Okay, I'm right and down to Serenity Circle.", file_name)
+                location = "Serenity Circle"
+            elif any(i in directions for i in ["tranquility", "right"]):
+                textToSpeech("Okay, I'm going right and up to Tranquility Lane.", file_name)
+                location = "Tranquility Lane"
+            else:
+                textToSpeech("I'm having trouble. I'm just going to go up and left to Hollow Square.", file_name)
+                location = "Hollow Square"
+        elif location == "Tranquility Lane": # crystal, harmony, twisted, clovered, riverside, willow, serenity
+            if any(i in directions for i in ["crystal", "falls", "drive", "up"]):
+                textToSpeech("Okay, I'm going upwards towards Crystal Falls Drive.", file_name)
+                location = "Crystal Falls Drive"
+            elif any(i in directions for i in ["willow", "creek", "avenue"])or (("left" in directions) and ("down" in directions)):
+                textToSpeech("Okay, I'm down and left to Willow Creek Avenue.", file_name)
+                location = "Willow Creek Avenue"
+            elif any(i in directions for i in ["harmony", "left"]):
+                textToSpeech("Okay, I'm going up and left to Harmony Lane.", file_name)
+                location = "Harmony Lane"
+            elif any(i in directions for i in ["twisted", "way"]) or (("right" in directions) and ("up" in directions)):
+                textToSpeech("Okay, I'm going up and right towards Twisted Way.", file_name)
+                location = "Twisted Way"
+            elif any(i in directions for i in ["clovered"]):
+                textToSpeech("Okay, I'm going up and right towards Clovered Lane.", file_name)
+                location = "Clovered Lane"
+            elif any(i in directions for i in ["riverside", "bend", "river", "side", "right"]):
+                textToSpeech("Okay, I'm going right to Riverside Bend.", file_name)
+                location = "Riverside Bend"
+            elif any(i in directions for i in ["serenity", "circle", "down"]):
+                textToSpeech("Okay, I'm going down and right to Serenity Circle.", file_name)
+                location = "Serenity Circle"
+            else:
+                textToSpeech("I'm having trouble. I'm just going to go upwards towards Crystal Falls Drive.", file_name)
+                location = "Crystal Falls Drive"
+        elif location == "Echo Valley Drive": # sunset, dead, serenity
+            if any(i in directions for i in ["sunset", "boulevard", "left", "up"]):
+                textToSpeech("Okay, I'm going left to Sunset Boulevard.", file_name)
+                location = "Sunset Boulevard"
+            elif any(i in directions for i in ["dead", "end", "down"]):
+                textToSpeech("Okay, I'm going down. This seems to be a dead end! You're not very helpful. I'm going to go up and left to Sunset Boulevard.", file_name)
+                location = "Sunset Boulevard"
+            elif any(i in directions for i in ["serenity", "circle", "right"]):
+                textToSpeech("Okay, I'm going right to Serenity Circle.", file_name)
+                location = "Serenity Circle"
+            else:
+                textToSpeech("I'm having trouble. I'm just going to go up and left to Sunset Boulevard.", file_name)
+                location = "Sunset Boulevard"
+        # elif location == "ivy":
+        # elif location == "hollow":
+        # elif location == "crystal":
+        # elif location == "harmony":
+        # elif location == "twisted":
+        # elif location == "clovered":
+        # elif location == "riverside":
+        # elif location == "sunset":
+        # location == "dead":
+        else:
+            textToSpeech("I'm getting tired! I'm still at " + location + ", which I think is still very far from home. I'm just going to call a taxi instead.", file_name)
+            break
+        
+        
+
+    # if "left" in directions:
+    #     textToSpeech("Okay, I’m taking a left towards _. This doesn’t seem right… I’m heading the other direction instead. I'm walking past a large tree. Which colored path should I take?", "three.mp3")
+    # elif "right" in directions: 
+    #     textToSpeech("So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
+    # else:
+    #     textToSpeech("I couldn’t quite hear you! So I’m taking a right near _, but it is all blocked off by police cars and cones. There is no way for me to get around! Is there another path that I could take?", "three.mp3")
+    
+    # add more nav
+    # try:
+    #     directionsAgain = speechToText(5)
+    # except:
+    #     directionsAgain = "change default directions here later" # update
+
+    # textToSpeech("I’m still lost " + name + ", and I’m starting to lose connection. Did you say " + 
+    #              textTranslated(directionsAgain) +
+    #              "? Please help me!", "four.mp3")
+    
+    # # add the text to respond
+    # response = "No"
+    # while True:
+    #     try:
+    #         response = speechToText(3)
+    #         if(("yeah" in response or "yes" in response) and response):
+    #             print("debugger2")
+    #             break
+    #         playsound(output_path + "repeat2.mp3")
+    #         gc.collect()
+    #     except Exception as e:
+    #         print("Error:", e)
+    #         playsound(output_path + "extraOne.mp3")
+    #         gc.collect()
+    #         print("debugger3")
+
+    # textToSpeech("Okay, I think I got it now. I am now at _, but I think I’m gonna need a taxi to get all the way back home. Do you happen to have a phonebook? Do you know what the number to call a cab is? Hurry " +
+    #             name + ", it’s already dark out here.", "five.mp3")
     
 
-    #taxi number
+    # TAXI THING
     try:
         taxi = speechToText(6) #reduce the time
         taxiWords = taxi.split()
@@ -226,11 +309,11 @@ def main():
 
     while True:
         try:
-            responce = speechToText(3)
-            if(responce and ("No" in responce or "no" in responce)):
+            response = speechToText(3)
+            if(response and ("No" in response or "no" in response)):
                 print("debugger2")
                 textToSpeech("okay let me know when you find it.", "six.mp3")
-            if(responce and ("yes" in responce or "Yes" in responce or "yeah" in responce)):
+            if(response and ("yes" in response or "Yes" in response or "yeah" in response)):
                 textToSpeech("okay let me know.", "six.mp3")
                 try:
                     taxi = speechToText(6) #reduce the time
