@@ -210,6 +210,8 @@ def textTranslated(text):
   'zu': 'zulu'}
 
   textWords = text.split()
+  if textWords < 3:
+      return "".join(textWords)
   translatedWords = int(len(textWords) / 3)
   newSentence = ""
   for i in range(translatedWords - 1):
