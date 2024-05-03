@@ -210,7 +210,7 @@ def textTranslated(text):
   'zu': 'zulu'}
 
   textWords = text.split()
-  if textWords < 3:
+  if len(textWords) < 3:
       return "".join(textWords)
   translatedWords = int(len(textWords) / 3)
   newSentence = ""
@@ -256,8 +256,6 @@ def getDirections():
            if(cantHearResponce == False):
                playsound(output_path +  "question.mp3")
                directions = speechToText(5)
-
-
            playsound(output_path +  "didYouSay.mp3")
            gc.collect()
            if (firstIteration):
@@ -273,10 +271,10 @@ def getDirections():
 
 
            #if you say no, it will cause an infinite loop!!!!!!
-           if(("yeah" in response or "yes" in response or "sure" in response)):
+           if(("yeah" in response or "yes" in response or "sure" in response) or iteration > 2):
                gc.collect()
                return directions.lower()
-          
+        
            playsound(output_path + "apology.mp3")
            gc.collect()
 
