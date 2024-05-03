@@ -22,6 +22,8 @@ from playsound import playsound
 import gc
 import numpy as np
 from word2number import w2n
+import random
+import re
 
 
 
@@ -97,134 +99,125 @@ def speechToText(time) :
 
 
 def textTranslated(text):
-   translator = Translator()
-   LANGUAGES = {
-   'af': 'afrikaans',
-   'sq': 'albanian',
-   'am': 'amharic',
-   'ar': 'arabic',
-   'hy': 'armenian',
-   'az': 'azerbaijani',
-   'eu': 'basque',
-   'be': 'belarusian',
-   'bn': 'bengali',
-   'bs': 'bosnian',
-   'bg': 'bulgarian',
-   'ca': 'catalan',
-   'ceb': 'cebuano',
-   'ny': 'chichewa',
-   'zh-cn': 'chinese (simplified)',
-   'zh-tw': 'chinese (traditional)',
-   'co': 'corsican',
-   'hr': 'croatian',
-   'cs': 'czech',
-   'da': 'danish',
-   'nl': 'dutch',
-   'en': 'english',
-   'eo': 'esperanto',
-   'et': 'estonian',
-   'tl': 'filipino',
-   'fi': 'finnish',
-   'fr': 'french',
-   'fy': 'frisian',
-   'gl': 'galician',
-   'ka': 'georgian',
-   'de': 'german',
-   'el': 'greek',
-   'gu': 'gujarati',
-   'ht': 'haitian creole',
-   'ha': 'hausa',
-   'haw': 'hawaiian',
-   'iw': 'hebrew',
-   'he': 'hebrew',
-   'hi': 'hindi',
-   'hmn': 'hmong',
-   'hu': 'hungarian',
-   'is': 'icelandic',
-   'ig': 'igbo',
-   'id': 'indonesian',
-   'ga': 'irish',
-   'it': 'italian',
-   'ja': 'japanese',
-   'jw': 'javanese',
-   'kn': 'kannada',
-   'kk': 'kazakh',
-   'km': 'khmer',
-   'ko': 'korean',
-   'ku': 'kurdish (kurmanji)',
-   'ky': 'kyrgyz',
-   'lo': 'lao',
-   'la': 'latin',
-   'lv': 'latvian',
-   'lt': 'lithuanian',
-   'lb': 'luxembourgish',
-   'mk': 'macedonian',
-   'mg': 'malagasy',
-   'ms': 'malay',
-   'ml': 'malayalam',
-   'mt': 'maltese',
-   'mi': 'maori',
-   'mr': 'marathi',
-   'mn': 'mongolian',
-   'my': 'myanmar (burmese)',
-   'ne': 'nepali',
-   'no': 'norwegian',
-   'or': 'odia',
-   'ps': 'pashto',
-   'fa': 'persian',
-   'pl': 'polish',
-   'pt': 'portuguese',
-   'pa': 'punjabi',
-   'ro': 'romanian',
-   'ru': 'russian',
-   'sm': 'samoan',
-   'gd': 'scots gaelic',
-   'sr': 'serbian',
-   'st': 'sesotho',
-   'sn': 'shona',
-   'sd': 'sindhi',
-   'si': 'sinhala',
-   'sk': 'slovak',
-   'sl': 'slovenian',
-   'so': 'somali',
-   'es': 'spanish',
-   'su': 'sundanese',
-   'sw': 'swahili',
-   'sv': 'swedish',
-   'tg': 'tajik',
-   'ta': 'tamil',
-   'te': 'telugu',
-   'th': 'thai',
-   'tr': 'turkish',
-   'uk': 'ukrainian',
-   'ur': 'urdu',
-   'ug': 'uyghur',
-   'uz': 'uzbek',
-   'vi': 'vietnamese',
-   'cy': 'welsh',
-   'xh': 'xhosa',
-   'yi': 'yiddish',
-   'yo': 'yoruba',
-   'zu': 'zulu'}
+  translator = Translator()
+  LANGUAGES = {
+  'af': 'afrikaans',
+  'sq': 'albanian',
+  'am': 'amharic',
+  'ar': 'arabic',
+  'hy': 'armenian',
+  'az': 'azerbaijani',
+  'eu': 'basque',
+  'be': 'belarusian',
+  'bn': 'bengali',
+  'bs': 'bosnian',
+  'bg': 'bulgarian',
+  'ca': 'catalan',
+  'ceb': 'cebuano',
+  'ny': 'chichewa',
+  'zh-cn': 'chinese (simplified)',
+  'zh-tw': 'chinese (traditional)',
+  'co': 'corsican',
+  'hr': 'croatian',
+  'cs': 'czech',
+  'da': 'danish',
+  'nl': 'dutch',
+  'en': 'english',
+  'eo': 'esperanto',
+  'et': 'estonian',
+  'tl': 'filipino',
+  'fi': 'finnish',
+  'fr': 'french',
+  'fy': 'frisian',
+  'gl': 'galician',
+  'ka': 'georgian',
+  'de': 'german',
+  'el': 'greek',
+  'gu': 'gujarati',
+  'ht': 'haitian creole',
+  'ha': 'hausa',
+  'haw': 'hawaiian',
+  'iw': 'hebrew',
+  'he': 'hebrew',
+  'hi': 'hindi',
+  'hmn': 'hmong',
+  'hu': 'hungarian',
+  'is': 'icelandic',
+  'ig': 'igbo',
+  'id': 'indonesian',
+  'ga': 'irish',
+  'it': 'italian',
+  'ja': 'japanese',
+  'jw': 'javanese',
+  'kn': 'kannada',
+  'kk': 'kazakh',
+  'km': 'khmer',
+  'ko': 'korean',
+  'ku': 'kurdish (kurmanji)',
+  'ky': 'kyrgyz',
+  'lo': 'lao',
+  'la': 'latin',
+  'lv': 'latvian',
+  'lt': 'lithuanian',
+  'lb': 'luxembourgish',
+  'mk': 'macedonian',
+  'mg': 'malagasy',
+  'ms': 'malay',
+  'ml': 'malayalam',
+  'mt': 'maltese',
+  'mi': 'maori',
+  'mr': 'marathi',
+  'mn': 'mongolian',
+  'my': 'myanmar (burmese)',
+  'ne': 'nepali',
+  'no': 'norwegian',
+  'or': 'odia',
+  'ps': 'pashto',
+  'fa': 'persian',
+  'pl': 'polish',
+  'pt': 'portuguese',
+  'pa': 'punjabi',
+  'ro': 'romanian',
+  'ru': 'russian',
+  'sm': 'samoan',
+  'gd': 'scots gaelic',
+  'sr': 'serbian',
+  'st': 'sesotho',
+  'sn': 'shona',
+  'sd': 'sindhi',
+  'si': 'sinhala',
+  'sk': 'slovak',
+  'sl': 'slovenian',
+  'so': 'somali',
+  'es': 'spanish',
+  'su': 'sundanese',
+  'sw': 'swahili',
+  'sv': 'swedish',
+  'tg': 'tajik',
+  'ta': 'tamil',
+  'te': 'telugu',
+  'th': 'thai',
+  'tr': 'turkish',
+  'uk': 'ukrainian',
+  'ur': 'urdu',
+  'ug': 'uyghur',
+  'uz': 'uzbek',
+  'vi': 'vietnamese',
+  'cy': 'welsh',
+  'xh': 'xhosa',
+  'yi': 'yiddish',
+  'yo': 'yoruba',
+  'zu': 'zulu'}
 
-
-   textWords = text.split()
-
-
-   newSentence = ""
-   for i in range(translatedWords):
-       random_number = random.randint(0, len(textWords))
-       textWords[random_number] = (translator.translate(textWords[random_number], dest = random.choice(list(LANGUAGES.keys())))).text
-   newSentence = "".join(textWords)
-
-
-   # print(translated_text.text)
-   # translated_text = translator.translate(translated_text.text, src='la')
-   # print(translated_text.text)
-   # translated_text = translator.translate(translated_text.text)
-   # print(translated_text.text)
-   translatedWords += 1
-   return newSentence
+  textWords = text.split()
+  translatedWords = int(len(textWords) / 3)
+  newSentence = ""
+  for i in range(translatedWords - 1):
+      random_number = random.randint(0, len(textWords)  - 1)
+      textWords[random_number] = (translator.translate(textWords[random_number], dest = random.choice(list(LANGUAGES.keys())))).text
+ 
+  newSentence = "".join(textWords)
+  return newSentence
 
 
 def textToSpeech(text, filename, play=True):
@@ -242,40 +235,55 @@ def textToSpeech(text, filename, play=True):
         playsound(output_file)
     gc.collect()
 
+
+
 iteration = 0
 cantHearResponce = False
+firstIteration = True
 def getDirections():
-    # print("function called")
-    output_path = "./SoundOutput/"
-    global iteration
-    global cantHearResponce
-    while True:
-        try:
-            if(cantHearResponce == False):
-                playsound(output_path +  "question.mp3")
-                directions = speechToText(5)
+   # print("function called")
+   output_path = "./SoundOutput/"
+   global iteration
+   global cantHearResponce
+   global firstIteration
+   firstIteration = True
 
-            playsound(output_path +  "didYouSay.mp3")
-            gc.collect()
-            textToSpeech(directions, "confirm" + str(iteration) + ".mp3")
-            iteration = iteration + 1
-            cantHearResponce = True
-            response = speechToText(2)
-            cantHearResponce = False;
 
-            #if you say no, it will cause an infinite loop!!!!!!
-            if(("yeah" in response or "yes" in response or "sure" in response)):
-                gc.collect()
-                return directions.lower()
-            
-            playsound(output_path + "apology.mp3")
-            gc.collect()
+   while True:
+       try:
+           if(cantHearResponce == False):
+               playsound(output_path +  "question.mp3")
+               directions = speechToText(5)
 
-        except Exception as e:
-            print(e)
-            if(cantHearResponce == False):
-                playsound(output_path + "extraOne.mp3")
-            gc.collect()
+
+           playsound(output_path +  "didYouSay.mp3")
+           gc.collect()
+           if (firstIteration):
+               directions = textTranslated(directions)
+           firstIteration = False
+           textToSpeech(directions, "confirm" + str(iteration) + ".mp3")
+
+
+           iteration = iteration + 1
+           cantHearResponce = True
+           response = speechToText(2)
+           cantHearResponce = False
+
+
+           #if you say no, it will cause an infinite loop!!!!!!
+           if(("yeah" in response or "yes" in response or "sure" in response)):
+               gc.collect()
+               return directions.lower()
+          
+           playsound(output_path + "apology.mp3")
+           gc.collect()
+
+
+       except Exception as e:
+           print(e)
+           if(cantHearResponce == False):
+               playsound(output_path + "extraOne.mp3")
+           gc.collect()
 
 def main():
     output_path = "./SoundOutput/"
@@ -385,26 +393,62 @@ def main():
         if i == 1:
             textToSpeech("Im running out of energy! I'm still at " + location + ", which I think is still very far from home. I’m gonna need to use taxi to get back. Do you happen to have a phonebook? Can you tell me the number to call a cab?", "directions" + str(i + 1) + ".mp3")
             break
+    textToSpeech("Im running out of energy! I'm still at " + location + ", which I think is still very far from home. I’m gonna need to use taxi to get back. Do you happen to have a phonebook? Can you telll me the number to call a cab?", file_name)
+
 
     # TAXI THING
+    global taxi
     while True:
         try:
-            taxi = speechToText(6) # reduce the time
-            taxiWords = []
-            taxiWords.extend(taxi)
-
+            taxi = speechToText(6) #reduce the time
+            taxiWords = taxi.split()
+            taxiWords = np.random.shuffle(taxiWords)
             taxi = ""
             for i in range(len(taxiWords)):
                 try:
                     w2n.word_to_num(taxiWords[i])
                     taxi = taxi + taxiWords[i] + " "
-                    print("taxi: " + taxi)
-                except Exception as e:
+                except:
                     print("not a number: " + taxiWords[i])
-            if (len(taxiWords) > 0):
+            if(len(taxiWords) > 0):
                 break
-        except Exception as e:
+        except:
             playsound(output_path + "findNumberQuestion.mp3")
+            print("no number")
+
+    # while True:
+    #     try:
+    #         response = speechToText(3)
+    #         if(response and ("No" in response or "no" in response)):
+    #             print("debugger2")
+    #             textToSpeech("okay let me know when you find it.", "six.mp3")
+    #         if(response and ("yes" in response or "Yes" in response or "yeah" in response)):
+    #             textToSpeech("okay let me know.", "six.mp3")
+    #             try:
+    #                 taxi = speechToText(6) #reduce the time
+    #                 taxiWords = taxi.split()
+    #                 if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
+    #                     break
+    #             except:
+    #                 textToSpeech("Can you say it again? ", "CanYouSayItAgain.mp3")
+    #                 break
+    #         else:
+    #             try:
+    #                 taxi = speechToText(6) #reduce the time
+    #                 taxiWords = taxi.split()
+    #                 if("four" == taxiWords[0] or "five"  == taxiWords[1] or  "three"  == taxiWords[2] or "seven" == taxiWords[3]):
+    #                     break
+    #             except:
+    #                 textToSpeech("Can you say it again? ", "CanYouSayItAgain.mp3")
+                            
+    #             break
+    #         gc.collect()
+    #     except Exception as e:
+    #         print("Error:", e)
+    #         playsound(output_path + "extraOne.mp3")
+    #         gc.collect()
+    #         print("debugger3")
+
        
     textToSpeech("Can you please repeat the number? I think I heard " +
                 taxi + ", but then you cut out. I can’t understand you!", "six.mp3")
