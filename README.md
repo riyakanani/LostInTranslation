@@ -2,7 +2,7 @@
 
 Website: https://malayaheflin.github.io/LostInTransWeb/
 
-##My contributions:
+<h1>My contributions:<h1>
 all codes besides lines 325-395 in the SpeachToTranslation.py is written by me. Furthermore, I used electrical engineering to rewire the rotary phone in which the input and output of the scripts are fed through. 
 
 ##About the project:
